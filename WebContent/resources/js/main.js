@@ -3,17 +3,18 @@ var rootURL = "http://localhost:8080/operatorInquiry/";
 
 var currentInquiry;
 
-
 // Retrieve Inquiry list when application starts 
 findAll();
 // Retrieve Topic list when application starts
 findTopic()
 
-// Nothing to delete in initial application state
+// Prepare new Inquiry when application starts
+newInquiry();
+
+// Nothing to delete ans save when application start
 $('#btnDelete').hide();
 $('#btnSave').hide();
 
-newInquiry();
 
 // Register listeners
 $('#btnSearch').click(function() {
@@ -25,14 +26,10 @@ $('#btnSearchAll').click(function() {
 	findAll();
 });
 
-// Trigger search when pressing 'Return' on search key input field
+
 $('#searchKey').keyup(function(e){
-	//if(e.which == 13) {
-	//		alert("asd");
 		search($('#searchKey').val());
-//		e.preventDefault();
-		return false;
-  //  }
+	return false;
 });
 
 $('#btnAdd').click(function() {
@@ -41,14 +38,6 @@ $('#btnAdd').click(function() {
 	return false;
 });
 
-/*$('#btnSave').click(function() {
-	if ($('#inquiryId').val() == '')
-		addInquiry();
-	else
-		updateInquiry();
-	return false;
-});
-*/
 $('#inquiryForm').submit(function(event){
 	if($('#customerName').val().length<=3){
 		return;
@@ -97,14 +86,12 @@ function findAll() {
 		type: 'GET',
 		url: rootURL +'inquiry/list',
 		dataType: "json", // data type of response
-		success: renderList
-		
+		success: renderList		
 	});
 }
 
 function findTopic(){
-		console.log('findTopic');
-		
+	console.log('findTopic');
 	$.ajax({
 		type: 'GET',
 		url: rootURL +'/topics',
@@ -151,16 +138,14 @@ function addInquiry() {
 		data: formToJSON(),
 		success: function(data, textStatus, jqXHR){
 			popUpMessag('Inquiry created successfully');
-			$('#btnDelete').show();
-			//$('#inquiryId').val(data.id);
 			findAll();
 			clearDetails();
+			$('#btnDelete').hide();
 		},
 		error: function(jqXHR, textStatus, errorThrown){
 			console.log(errorThrown);
 			alert('addInquiry error: ' + textStatus);
 			upDate();
-			//popUpMessag("User Inquiry create successfull")
 		}
 	});
 }
@@ -197,6 +182,7 @@ function deleteInquiry() {
 			$('#btnDelete').hide();
 			findAll();
 			clearDetails();
+			newInquiry();
 
 		},
 		error: function(jqXHR, textStatus, errorThrown){
@@ -227,8 +213,6 @@ function renderListTopic(data){
 }
 
 function getDateFormat(date){ // getDate from int value
-	
-	
 			var monthNames = [
 			"January", "February", "March",
 		  "April", "May", "June", "July",
@@ -242,8 +226,7 @@ function getDateFormat(date){ // getDate from int value
 		var monthIndex = date.getMonth();
 		monthIndex = monthIndex>10 ? monthIndex: "0" + monthIndex;
 		var year = date.getFullYear();
-	return year+'-'+monthIndex+'-'+ day;
-	
+	return year+'-'+monthIndex+'-'+ day;	
 }
 
 function renderDetails(inquiry) {
@@ -262,7 +245,6 @@ function clearDetails() {
 	$('#inquiryId').val("");
 	$('#topic').val("");
 	$('#customerName').val("");
-	//$('#createDate').val(getDate(new Date()));
 	$('#attributeOfInquiryId').val("");
 	$('#model').val("");
 	$('#adress').val("");
@@ -274,7 +256,6 @@ function clearDetails() {
 
 // Helper function to serialize all the form fields into a JSON string
 function formToJSON() {
-	
 	var inquiryId = $('#inquiryId').val();
 	var topicSelect = $('#topicSelect option:selected').attr('value');
 	var attrId = $('attributeOfInquiryId').val();
@@ -297,6 +278,6 @@ function formToJSON() {
 }
 
 	function popUpMessag(message) {
-		bootbox.alert(message, function() {
+			bootbox.alert(message, function() {
 		});
 	}

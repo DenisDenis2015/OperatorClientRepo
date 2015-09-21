@@ -4,11 +4,7 @@
 <head>
 <title>Work with user Inquiry</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<!-- <link rel="stylesheet" href="resources/css/styles.css" /> -->
 
-
-
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
 <script src="http://code.jquery.com/jquery-2.0.0.js"></script>
 <script src="http://code.jquery.com/jquery-migrate-1.1.1.js"></script>
 
@@ -35,6 +31,10 @@
 
 <!-- My CSS Style overrading Bootstrap ) -->
 <link rel="stylesheet" type="text/css" href="resources/css/myStyle.css" />
+
+<!-- Import script for ModalMessages -->
+<script src="resources/js/modalMessage.js"></script>
+
 
 </head>
 
@@ -80,14 +80,7 @@
 				    placeholder="Customer name" required data-minlength="4" required/>
 				    <span class="help-block">Minimum of 4 characters</span>
 			   </div>
-			   
-			<!--    <div class="form-group">
-			   		<label>Email:</label>
-			  	    <input type="email" id="email" name="email" class="form-control"
-				    required data-minlength="4" required
-				    placeholder="Email" data-error="Bruh, that email address is invalid" required/>
-			   </div> -->
-			   
+			   		   
 			   <div class="form-group">			   
 				   <label>Create Date:</label>
 				    <input type="text" id="createDate" name="CreateDate1" class="form-control" readonly/> 
@@ -139,62 +132,35 @@
 		</div><!-- end of  class="col-sm-4"-->
 
 	</form>
-				</div>	<!-- end of  class="row"-->
+	 </div>	<!-- end of  class="row"-->
 	
 	</div> <!-- end of class="container" -->
 
 
-<!-- html for modal window -->
-	<div class="modal fade">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal"
-						aria-hidden="true">×</button>
-					<h4 class="modal-title">Modal title</h4>
+	<!-- html for modal window -->
+		<div class="modal fade">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true">×</button>
+						<h4 class="modal-title">Modal title</h4>
+					</div>
+					<div class="modal-body">
+						<p>One fine body…</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary">Save changes</button>
+					</div>
 				</div>
-				<div class="modal-body">
-					<p>One fine body…</p>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary">Save changes</button>
-				</div>
+				<!-- /.modal-content -->
 			</div>
-			<!-- /.modal-content -->
+			<!-- /.modal-dialog -->
 		</div>
-		<!-- /.modal-dialog -->
-	</div>
-	<!-- /.modal -->
-	
-	<!-- sometime later, probably inside your on load event callback -->
-
-<!-- script for Modal window -->	
-<script>
-    $("#myModal").on("show", function() {    // wire up the OK button to dismiss the modal when shown
-        $("#myModal a.btn").on("click", function(e) {
-            console.log("button pressed");   // just as an example...
-            $("#myModal").modal('hide');     // dismiss the dialog
-        });
-    });
-    $("#myModal").on("hide", function() {    // remove the event listeners when the dialog is dismissed
-        $("#myModal a.btn").off("click");
-    });
-    
-    $("#myModal").on("hidden", function() {  // remove the actual elements from the DOM when fully hidden
-        $("#myModal").remove();
-    });
-    
-    $("#myModal").modal({                    // wire up the actual modal functionality and show the dialog
-      "backdrop"  : "static",
-      "keyboard"  : true,
-      "show"      : true                     // ensure the modal is shown immediately
-    });
-</script>
-	
-	
-	<script src="resources/js/main.js"></script>
-	
+		<!-- /.modal -->
+		
+		<script src="resources/js/main.js"></script>
 
 </body>
 </html>
