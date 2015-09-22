@@ -59,6 +59,16 @@ $('#inquiryList').on('click','a', function() {
 	findById($(this).attr('data-identity'));
 });
 
+$(function() {
+$('input[name="CreateDate1"]').daterangepicker({
+		singleDatePicker : true,
+		showDropdowns : true,
+		locale : {
+		format : 'YYYY-MM-DD hh:mm'
+	   }
+	});
+});
+
 function upDate(){
 			$('#btnDelete').show();
 			findAll();
