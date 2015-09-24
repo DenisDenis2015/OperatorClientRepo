@@ -59,10 +59,51 @@ $('#inquiryList').on('click','a', function() {
 	findById($(this).attr('data-identity'));
 });
 
+$('#btnAddAtrrInquiry').click(function(){
+	value = [];
+	value.id="";
+	value.name="";
+	value.value="";
+	createHTMforInputAttr(value); 
+		   	
+	
+});
+
+function createOrFillFieldForAttr(inquiry){
+	for(var key in inquiry.attributes) {
+	    	var value = inquiry.attributes[key];
+	    	createHTMforInputAttr(value)	
+	}
+};
+
+$('#btnDelAtrrInquiry').click(function() {
+	$(".form-horizontal .form-group:last").remove();
+});
+
+
+function createHTMforInputAttr(value){
+	$('#attributeInquiry').append(''
+		    +'	<div class="form-horizontal"> '
+			    +'<div class="form-group"> '
+			        +'<div class="col-sm-5">'
+			         +'<Label>Name:</Label>'
+			          +  '<input type="text" class="form-control" valueId="'+value.id+'" nameValue="'+value.name+'" placeholder="NameParametr" value="'+value.name+ '"/>'
+			       +' </div>'
+			        +'<div class="col-sm-5">'
+			         +'<Label>Value:</Label>'
+			           +' <input type="text" class="form-control" valueValue="'+value.value+'" placeholder="ValueParametr" value="'+value.value+'"/>'
+			       +' </div>'
+			   +'</div>'
+			+'</div>'
+				);
+}
+
 $(function() {
 $('input[name="CreateDate1"]').daterangepicker({
 		singleDatePicker : true,
 		showDropdowns : true,
+		timePicker: true,
+		timePicker24Hour: true,
 		locale : {
 		format : 'YYYY-MM-DD hh:mm'
 	   }
@@ -84,6 +125,7 @@ function search(searchKey) {
 }
 
 function newInquiry() {
+	clearDetails();
 	$('#btnDelete').hide();
 	$('#btnSave').show();
 	currentInquiry = {"topic":"", "attributeOfInquiry":"","createDate":new Date()};
@@ -122,7 +164,8 @@ function findByName(searchKey) {
 
 function findById(id) {
 	console.log('findById: ' + id);
-	var custNam = $('#id'+id).text();	
+	var custNam = $('#id'+id).attr('custName');
+	console.log(custNam);
 	$.ajax({
 		type: 'GET',
 		url: rootURL + 'customers/' + custNam +'/inquiries/'+id,
@@ -196,6 +239,7 @@ function deleteInquiry() {
 
 		},
 		error: function(jqXHR, textStatus, errorThrown){
+			console.log(errorThrown);
 			alert('deleteInquiry error');
 		}
 	});
@@ -207,7 +251,9 @@ function renderList(data) {
 	
 	$('#inquiryList li').remove();
 	$.each(list, function(index, inquiry) {
-		$('#inquiryList').append('<li><a class="list-group-item" id=id'+ inquiry.id +' href="#" data-identity="' + inquiry.id + '">'+inquiry.customerName +'</a></li>');
+		$('#inquiryList').append('<li><a class="list-group-item" custName="'+ inquiry.customerName+'" id=id'+ inquiry.id +' href="#" data-identity="'
+			+ inquiry.id + '">'+inquiry.customerName + ' Date:' + getDateFormat(inquiry.createDate)+'</a>');
+			/*getDateFormat(inquiry.createDate)*/
 	});
 }
 
@@ -216,27 +262,23 @@ function renderListTopic(data){
 	var list = data == null ? [] : (data instanceof Array ? data : [data]);
 	$.each(list, function(index, topic) {
 		$('#topicSelect').append(' <option id=topic'+topic.id+' value="'+ topic.id +'">'+topic.name+'</opion>');
-	});
-	
-	
-	
+	});	
 }
 
 function getDateFormat(date){ // getDate from int value
-			var monthNames = [
-			"January", "February", "March",
-		  "April", "May", "June", "July",
-		  "August", "September", "October",
-		  "November", "December"
-		];
-		
+	    //conver date to our format
 		var date = new Date(date);
 		var day = date.getDate();
-		day = day>10 ? day : "0" +day; 
-		var monthIndex = date.getMonth();
-		monthIndex = monthIndex>10 ? monthIndex: "0" + monthIndex;
+		day = day>=10 ? day : "0" +day; 
+		var month = date.getMonth();
+		var m = Number(month) + 1;
+		m = m>=10 ? m: "0"+"" + m;
 		var year = date.getFullYear();
-	return year+'-'+monthIndex+'-'+ day;	
+		var hours = date.getHours();
+		hours = hours>=10 ? hours:"0" + hours;
+		var minut = date.getMinutes();
+		minut = minut>=10 ? minut:"0" + minut;
+	return year+'-'+m+'-'+ day +'  ' +hours +':'+minut;	
 }
 
 function renderDetails(inquiry) {
@@ -245,23 +287,38 @@ function renderDetails(inquiry) {
 	$('#customerName').val(inquiry.customerName);
 	$('#createDate').val(getDateFormat(inquiry.createDate));
 	$('textarea#description').val(inquiry.description);
-	$('#attributeOfInquiryId').val(inquiry.attributeOfInquiry.id);
-	$('#model').val(inquiry.attributeOfInquiry.model);
-	$('#adress').val(inquiry.attributeOfInquiry.adress);
-	$('#city').val(inquiry.attributeOfInquiry.city);	
-}
+	
+	createOrFillFieldForAttr(inquiry);
+	
+	}
 
 function clearDetails() {
 	$('#inquiryId').val("");
 	$('#topic').val("");
 	$('#customerName').val("");
 	$('#attributeOfInquiryId').val("");
-	$('#model').val("");
-	$('#adress').val("");
-	$('#city').val("");	
 	$('textarea#description').val("");
+	$('#attributeInquiry').empty();
+	$('#createDate').val(getDateFormat(Date.now()));
 }
 
+function getAttrInq(){
+	var IDs = [];
+	var data = {};
+		$("#attributeInquiry").find("input").each(function(){
+			
+				if($(this).attr('nameValue')!=undefined){
+					 data.id= $(this).attr('valueId');
+					 data.name = $(this).attr('value');
+				}else{
+					data.value = $(this).attr('value');
+					IDs.push(data);
+					data = {};
+				}
+		});
+		console.log(IDs);
+	return IDs;
+}
 
 
 // Helper function to serialize all the form fields into a JSON string
@@ -269,21 +326,31 @@ function formToJSON() {
 	var inquiryId = $('#inquiryId').val();
 	var topicSelect = $('#topicSelect option:selected').attr('value');
 	var attrId = $('attributeOfInquiryId').val();
-	var date = ($('#createDate').val()); 
-	//alert(date);
-	return JSON.stringify({
+	var date = $('#createDate').val();
+	alert(date);
+	
+	var reggie = /(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})/;
+	var dateArray = reggie.exec(date); 
+	var dateObject = new Date(
+    (+dateArray[1]),
+    (+dateArray[2])-1, // Careful, month starts at 0!
+    (+dateArray[3]),
+    (+dateArray[4]),
+    (+dateArray[5])
+	);
+
+	var attributes =  getAttrInq();
+	
+	var inquiry = {
 		"id": inquiryId == "" ? null : inquiryId, 
-		"topic" :{"id": topicSelect ,"name": topicSelect },  // поменять
-		 "attributeOfInquiry" :   {
-			 						"id": attrId =="" ? null : attrId, 
-						  			"model" : $('#model').val(),
-						  		    "adress": $('#adress').val(),
-						  			 "city" :  $('#city').val()
-		 							},
+		"topic" :{"id": topicSelect ,"name": topicSelect },  
 		"description": $('#description').val(),
-		"createDate": date,
-		"customerName": $('#customerName').val()  
-		});
+		"createDate": dateObject.getTime(),
+		"customerName": $('#customerName').val() ,
+		"attributes" : attributes
+		};
+		
+		return JSON.stringify(inquiry);
 		
 }
 
