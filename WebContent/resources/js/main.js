@@ -12,7 +12,9 @@ findTopic()
 newInquiry();
 
 // Nothing to delete ans save when application start
-hideButton();
+$('#btnDelete').hide();
+$('#btnSave').hide();
+
 
 // Register listeners
 $('#btnSearch').click(function() {
@@ -22,6 +24,12 @@ $('#btnSearch').click(function() {
 
 $('#btnSearchAll').click(function() {
 	findAll();
+});
+
+
+$('#searchKey').keyup(function(e){
+		search($('#searchKey').val());
+	return false;
 });
 
 $('#btnAdd').click(function() {
@@ -51,14 +59,7 @@ $('#inquiryList').on('click','a', function() {
 	findById($(this).attr('data-identity'));
 });
 
-$('#attributeInquiry').on('click','a', function() {
-	$(this).parents('.form-horizontal').remove();
-});
-
 $('#btnAddAtrrInquiry').click(function(){
-	if($("#attributeInquiry :input:last").val().length<3){
-		return
-	}
 	value = [];
 	value.id="";
 	value.name="";
@@ -68,22 +69,6 @@ $('#btnAddAtrrInquiry').click(function(){
 	
 });
 
-function hideButton(){
-		$('#btnDelete').hide();
-		$('#btnSave').hide();
-		$('#btnAddAtrrInquiry').hide();
-}
-
-function showButton(){
-		$('#btnDelete').show();
-		$('#btnSave').show();
-		$('#btnAddAtrrInquiry').show();
-}
-
-$('#btnDelAtrrInquiry').click(function() {
-	$(".form-horizontal .form-group:last").remove();
-});
-
 function createOrFillFieldForAttr(inquiry){
 	for(var key in inquiry.attributes) {
 	    	var value = inquiry.attributes[key];
@@ -91,21 +76,23 @@ function createOrFillFieldForAttr(inquiry){
 	}
 };
 
+$('#btnDelAtrrInquiry').click(function() {
+	$(".form-horizontal .form-group:last").remove();
+});
+
+
 function createHTMforInputAttr(value){
 	$('#attributeInquiry').append(''
 		    +'	<div class="form-horizontal"> '
 			    +'<div class="form-group"> '
 			        +'<div class="col-sm-5">'
 			         +'<Label>Name:</Label>'
-			          +  '<input required data-minlength="3" required type="text" class="form-control" valueId="'+value.id+'" nameValue="'+value.name+'" placeholder="NameParametr" value="'+value.name+ '"/>'
+			          +  '<input type="text" class="form-control" valueId="'+value.id+'" nameValue="'+value.name+'" placeholder="NameParametr" value="'+value.name+ '"/>'
 			       +' </div>'
 			        +'<div class="col-sm-5">'
 			         +'<Label>Value:</Label>'
-			           +' <input required data-minlength="3" required type="text" class="form-control" valueValue="'+value.value+'" placeholder="ValueParametr" value="'+value.value+'"/>'
+			           +' <input type="text" class="form-control" valueValue="'+value.value+'" placeholder="ValueParametr" value="'+value.value+'"/>'
 			       +' </div>'
-			        +'<div class="col-sm-1">'
-			        		+'<a href=#><span class="glyphicon glyphicon-trash"></span></a>'
-			       +' </div>'		        			        
 			   +'</div>'
 			+'</div>'
 				);
@@ -113,10 +100,10 @@ function createHTMforInputAttr(value){
 
 $(function() {
 $('input[name="CreateDate1"]').daterangepicker({
-		timePicker: true,
-		timePicker24Hour: true,
 		singleDatePicker : true,
 		showDropdowns : true,
+		timePicker: true,
+		timePicker24Hour: true,
 		locale : {
 		format : 'YYYY-MM-DD hh:mm'
 	   }
@@ -169,7 +156,7 @@ function findByName(searchKey) {
 	console.log('findByName: ' + searchKey);
 	$.ajax({
 		type: 'GET',
-		url: rootURL + 'customers/' + searchKey +'/inquiries',
+		url: rootURL + 'search/' + searchKey,
 		dataType: "json",
 		success: renderList 
 	});
@@ -184,7 +171,8 @@ function findById(id) {
 		url: rootURL + 'customers/' + custNam +'/inquiries/'+id,
 		dataType: "json",
 		success: function(data){
-			showButton();
+			$('#btnDelete').show();
+			$('#btnSave').show();
 			console.log('findById success: ' + data.name);
 			currentInquiry = data;
 			clearDetails();		
@@ -227,7 +215,6 @@ function updateInquiry() {
 		data: formToJSON(),
 		success: function(data, textStatus, jqXHR){
 			popUpMessag('Inquiry updated successfully');
-			clearDetails();
 			findAll();
 		},
 		error: function(jqXHR, textStatus, errorThrown){
@@ -265,7 +252,7 @@ function renderList(data) {
 	$('#inquiryList li').remove();
 	$.each(list, function(index, inquiry) {
 		$('#inquiryList').append('<li><a class="list-group-item" custName="'+ inquiry.customerName+'" id=id'+ inquiry.id +' href="#" data-identity="'
-			+ inquiry.id + '">User : <span class="text-success">'+inquiry.customerName +'</span></br>'+ 'Inquiry Date:<span class="text-primary">' + getDateFormat(inquiry.createDate)+'</span></a>');
+			+ inquiry.id + '">'+inquiry.customerName + ' Date:' + getDateFormat(inquiry.createDate)+'</a>');
 			/*getDateFormat(inquiry.createDate)*/
 	});
 }
@@ -291,7 +278,7 @@ function getDateFormat(date){ // getDate from int value
 		hours = hours>=10 ? hours:"0" + hours;
 		var minut = date.getMinutes();
 		minut = minut>=10 ? minut:"0" + minut;
-	return year+'-'+m+'-'+ day +' ' +hours +':'+minut;	
+	return year+'-'+m+'-'+ day +'  ' +hours +':'+minut;	
 }
 
 function renderDetails(inquiry) {
@@ -340,15 +327,16 @@ function formToJSON() {
 	var topicSelect = $('#topicSelect option:selected').attr('value');
 	var attrId = $('attributeOfInquiryId').val();
 	var date = $('#createDate').val();
-
+	alert(date);
+	
 	var reggie = /(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})/;
 	var dateArray = reggie.exec(date); 
 	var dateObject = new Date(
-	    (+dateArray[1]),
-	    (+dateArray[2])-1, // Careful, month starts at 0!
-	    (+dateArray[3]),
-	    (+dateArray[4]),
-	    (+dateArray[5])
+    (+dateArray[1]),
+    (+dateArray[2])-1, // Careful, month starts at 0!
+    (+dateArray[3]),
+    (+dateArray[4]),
+    (+dateArray[5])
 	);
 
 	var attributes =  getAttrInq();
