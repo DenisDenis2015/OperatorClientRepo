@@ -34,12 +34,6 @@ $('#inquiryForm').submit(function(event){
 	if($('#customerName').val().length<=3){
 		return;
 	}
-	if($("#attributeInquiry :input:last").val()==undefined){
-		}else{
-			if($("#attributeInquiry :input:last").val().length<3){
-			return;
-		}
-	}	
 	if ($('#inquiryId').val() == '')
 		addInquiry();
 	else
@@ -62,17 +56,16 @@ $('#attributeInquiry').on('click','a', function() {
 });
 
 $('#btnAddAtrrInquiry').click(function(){
-	if($("#attributeInquiry :input:last").val()==undefined){
-		}else{
-			if($("#attributeInquiry :input:last").val().length<3){
-			return;
-		}
+	if($("#attributeInquiry :input:last").val().length<3){
+		return
 	}
 	value = [];
 	value.id="";
 	value.name="";
 	value.value="";
 	createHTMforInputAttr(value); 
+		   	
+	
 });
 
 function hideButton(){
@@ -105,12 +98,10 @@ function createHTMforInputAttr(value){
 			        +'<div class="col-sm-5">'
 			         +'<Label>Name:</Label>'
 			          +  '<input required data-minlength="3" required type="text" class="form-control" valueId="'+value.id+'" nameValue="'+value.name+'" placeholder="NameParametr" value="'+value.name+ '"/>'
-			          +'<div class="help-block with-errors"></div>'
 			       +' </div>'
 			        +'<div class="col-sm-5">'
 			         +'<Label>Value:</Label>'
 			           +' <input required data-minlength="3" required type="text" class="form-control" valueValue="'+value.value+'" placeholder="ValueParametr" value="'+value.value+'"/>'
-			           + '<div class="help-block with-errors"></div>'
 			       +' </div>'
 			        +'<div class="col-sm-1">'
 			        		+'<a href=#><span class="glyphicon glyphicon-trash"></span></a>'
@@ -124,11 +115,10 @@ $(function() {
 $('input[name="CreateDate1"]').daterangepicker({
 		timePicker: true,
 		timePicker24Hour: true,
-		timePickerIncrement: 5,
 		singleDatePicker : true,
 		showDropdowns : true,
 		locale : {
-		format : 'YYYY-MM-DD HH:mm'
+		format : 'YYYY-MM-DD hh:mm'
 	   }
 	});
 });
@@ -151,7 +141,6 @@ function newInquiry() {
 	clearDetails();
 	$('#btnDelete').hide();
 	$('#btnSave').show();
-	$('#btnAddAtrrInquiry').show();
 	currentInquiry = {"topic":"", "attributeOfInquiry":"","createDate":new Date()};
 	renderDetails(currentInquiry); // Display empty form
 }
@@ -276,7 +265,7 @@ function renderList(data) {
 	$('#inquiryList li').remove();
 	$.each(list, function(index, inquiry) {
 		$('#inquiryList').append('<li><a class="list-group-item" custName="'+ inquiry.customerName+'" id=id'+ inquiry.id +' href="#" data-identity="'
-			+ inquiry.id + '"><span class="glyphicon glyphicon-user"> </span><span class="text-success">'+inquiry.customerName +'</span></br><span class="glyphicon glyphicon-calendar"></span><span class="text-primary">' + getDateFormat(inquiry.createDate)+'</span></a>');
+			+ inquiry.id + '">User : <span class="text-success">'+inquiry.customerName +'</span></br>'+ 'Inquiry Date:<span class="text-primary">' + getDateFormat(inquiry.createDate)+'</span></a>');
 			/*getDateFormat(inquiry.createDate)*/
 	});
 }
