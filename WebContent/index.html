@@ -79,8 +79,9 @@
 			   <div class="form-group">
 				   <label>Customer Name:</label>
 				    <input type="text" id="customerName" name="customerName" class="form-control"
-				    placeholder="Customer name" required data-minlength="4" required/>
+				    placeholder="Customer name" required data-minlength="4"/>
 				    <span class="help-block">Minimum of 4 characters</span>
+				    <div class="help-block with-errors"></div>
 			   </div>
 			   		   
 			   <div class="form-group">			   
@@ -92,16 +93,13 @@
 			   <div class="form-group" id="attributeInquiry"></div>
 			   
 			<button type="button" id="btnAddAtrrInquiry" class="btn btn-default">
-			<span class="glyphicon glyphicon-plus"></span>Add</button>
-			
-<!-- 			<button type="button" id="btnDelAtrrInquiry" class="btn btn-default">
-			<span class="glyphicon glyphicon-minus"></span>Del</button> -->
-		   			   			   
+			<span class="text-primary"><span class="glyphicon glyphicon-plus"></span>Add</span></button>
+					   			   			   
 			<button type="submit" id="btnSave" class="btn btn-default" class="btn btn-primary">
-			<span class="glyphicon glyphicon-floppy-disk"></span>Save</button>
+			<span class="text-success"><span class="glyphicon glyphicon-floppy-disk"></span>Save</span></button>
 			
 			<button id="btnDelete" class="btn btn-default">
-			<span class="glyphicon glyphicon-trash"></span> Delete</button>
+			<span class="text-danger"><span class="glyphicon glyphicon-trash"></span>Delete</span></button>
 
 		</div> <!-- end of  class="col-sm-4"-->
 
